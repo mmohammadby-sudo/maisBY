@@ -6,6 +6,8 @@ use App\Models\User;
 use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use OpenApi\Attributes as OA;
 
 class UserController extends Controller
 {
@@ -75,6 +77,68 @@ class UserController extends Controller
 
     }
     
+
+
+
+
+    #[OA\Post(
+        path: '/api/token',
+        summary: 'Get User Token',
+        tags: ['Products'],
+        requestBody: new OA\RequestBody(
+            required:true,
+            content:new OA\JsonContent(
+                type:'object',
+                properties:[
+                   new OA\Property(property:'email',type:'string'),
+                   new OA\Property(property:'password',type:'string'),
+                   new OA\Property(property:'device_name',type:'string'),
+                ])),
+        responses: [
+            new OA\Response(
+                response: 200,
+                description: 'Returne Token Successfully ',
+                content: new OA\JsonContent(
+                    type: 'object',
+                    properties: [
+                        new OA\Property(property: 'token', type: 'string', example: '1|abc123tokenexample')
+                    ]
+                )
+            ),
+            new OA\Response(response: 401, description: 'Invalid credentials')
+        ]
+    )]
+    public function token(Request $request){
+         $request->validate([
+        'email' => 'required|email',
+        'password' => 'required',
+        'device_name' => 'required',
+    ]);
+
+    $user = User::where('email', $request->email)->first();
+
+    if (! $user || ! Hash::check($request->password, $user->password)) {
+        return response()->json([
+            'message' => 'Invalid credentials.'
+        ], 401);
+    }
+
+    // Delete old tokens 
+    $user->tokens()->where('name', $request->device_name)->delete();
+
+    // Create new token
+    $token = $user->createToken($request->device_name)->plainTextToken;
+
+    return response()->json([
+        'token' => $token,
+        'user' => $user,
+    ]);
+    }
+
+
+
+
+
     /**
      * Display the specified resource.
      */

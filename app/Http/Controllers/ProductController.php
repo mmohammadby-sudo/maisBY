@@ -18,6 +18,7 @@ class ProductController extends Controller
 
    public function __construct(ProductService $productService) {
     $this->productService = $productService;
+  // $this->middleware('auth:sanctum');   if u need auth for all methods in ...
    }
 
     /**
@@ -31,8 +32,9 @@ class ProductController extends Controller
     }
 
 #[OA\Get(
-    path:'/getAllProduct',
+    path:'/api/getAllProduct',
     tags:['Products'],
+    security: [["bearerAuth" => []]],
     responses:[
         new  OA\Response(
             response:200,
@@ -51,8 +53,9 @@ class ProductController extends Controller
 
  
 #[OA\Get(
-    path:'/getProductById/{id}',
-    tags:['Products'],
+    path:'/api/getProductById/{id}',
+    tags:['Products'],       
+    security: [["bearerAuth" => []]],
      parameters: [
         new OA\Parameter(
             name: 'id',
@@ -83,9 +86,10 @@ class ProductController extends Controller
      * Store a newly created resource in storage.
      */
      #[OA\Post(
-        path: '/store',
+        path: '/api/store',
         summary: 'Create a product by ID',
         tags: ['Products'],
+        security: [["bearerAuth" => []]],
         requestBody: new OA\RequestBody(
             required:true,
             content:new OA\JsonContent(
@@ -96,16 +100,7 @@ class ProductController extends Controller
                    new OA\Property(property:'category_id',type:'integer'),
                 ]
 
-            )
-                ),
-        parameters: [
-  new OA\Parameter(    name: "X-CSRF-TOKEN",
-    in: "header",
-    required: true,
-    schema: new OA\Schema(type: "string"),
-    example: "your-csrf-token-here",
-    description: "CSRF token required for store requests"
-    )],
+                )),
         responses: [
             new OA\Response(
                 response: 200,
@@ -131,9 +126,10 @@ class ProductController extends Controller
      * Update the specified resource in storage.
      */
      #[OA\Put(
-        path: '/update/{id}',
+        path: '/api/update/{id}',
         summary: 'Update a product by ID',
         tags: ['Products'],
+        security: [["bearerAuth" => []]],
          requestBody: new OA\RequestBody(
             required:true,
             content:new OA\JsonContent(
@@ -153,14 +149,7 @@ class ProductController extends Controller
                 required: true,
                 schema: new OA\Schema(type: 'integer'),
                 example: 6
-            ),
-  new OA\Parameter(    name: "X-CSRF-TOKEN",
-    in: "header",
-    required: true,
-    schema: new OA\Schema(type: "string"),
-    example: "your-csrf-token-here",
-    description: "CSRF token required for Update requests"
-    )],
+            )],
         responses: [
             new OA\Response(
                 response: 200,
@@ -180,13 +169,20 @@ class ProductController extends Controller
 
     }
 
+
+
+
+
+
+
     /**
      * Remove the specified resource from storage.
      */
      #[OA\Delete(
-        path: '/delete/{id}',
+        path: '/api/delete/{id}',
         summary: 'Delete a product by ID',
         tags: ['Products'],
+        security: [["bearerAuth" => []]],
         parameters: [
             new OA\Parameter(
                 name: 'id',
@@ -195,13 +191,7 @@ class ProductController extends Controller
                 schema: new OA\Schema(type: 'integer'),
                 example: 6
             ),
-  new OA\Parameter(    name: "X-CSRF-TOKEN",
-    in: "header",
-    required: true,
-    schema: new OA\Schema(type: "string"),
-    example: "your-csrf-token-here",
-    description: "CSRF token required for DELETE requests"
-    )],
+  ],
         responses: [
             new OA\Response(
                 response: 200,

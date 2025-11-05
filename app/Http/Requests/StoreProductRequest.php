@@ -23,7 +23,7 @@ class StoreProductRequest extends FormRequest
     {
         return [
          'name' => 'required|string|min:3',
-         'ç'=>'required',
+         'price'=>'required',
         'category_id' => 'required',
              //
         ];

@@ -6,30 +6,35 @@
     },
     "servers": [
         {
-            "url": "http://127.0.0.1:8000/api",
+            "url": "http://127.0.0.1:8000/",
             "description": "Local API Server"
         }
     ],
     "paths": {
-        "/getAllProduct": {
+        "/api/getAllProduct": {
             "get": {
                 "tags": [
                     "Products"
                 ],
-                "operationId": "f499ddd1721970aceed69657398d0db8",
+                "operationId": "dea55e1199c799e1f038a20c65562a70",
                 "responses": {
                     "200": {
                         "description": "Get All Products"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/getProductById/{id}": {
+        "/api/getProductById/{id}": {
             "get": {
                 "tags": [
                     "Products"
                 ],
-                "operationId": "20643b835b55432e1f96fc991185d9f6",
+                "operationId": "c4f857f51698a20443d6ca38d6ff1302",
                 "parameters": [
                     {
                         "name": "id",
@@ -46,29 +51,22 @@
                     "200": {
                         "description": "Get Product By Id"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/store": {
+        "/api/store": {
             "post": {
                 "tags": [
                     "Products"
                 ],
                 "summary": "Create a product by ID",
                 "description": "Store a newly created resource in storage.",
-                "operationId": "99ca993cdd9d55003d55dfb70c88a96b",
-                "parameters": [
-                    {
-                        "name": "X-CSRF-TOKEN",
-                        "in": "header",
-                        "description": "CSRF token required for store requests",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "your-csrf-token-here"
-                    }
-                ],
+                "operationId": "717f35e0aa760ea195854f380d99b361",
                 "requestBody": {
                     "required": true,
                     "content": {
@@ -110,17 +108,22 @@
                     "404": {
                         "description": "Product not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/update/{id}": {
+        "/api/update/{id}": {
             "put": {
                 "tags": [
                     "Products"
                 ],
                 "summary": "Update a product by ID",
                 "description": "Update the specified resource in storage.",
-                "operationId": "dd19fb5746fb095bbb552dcbb00afff8",
+                "operationId": "737accf118bdf8385bd0bcb2d22ae78c",
                 "parameters": [
                     {
                         "name": "id",
@@ -130,16 +133,6 @@
                             "type": "integer"
                         },
                         "example": 6
-                    },
-                    {
-                        "name": "X-CSRF-TOKEN",
-                        "in": "header",
-                        "description": "CSRF token required for Update requests",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "your-csrf-token-here"
                     }
                 ],
                 "requestBody": {
@@ -183,17 +176,22 @@
                     "404": {
                         "description": "Product not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
-        "/delete/{id}": {
+        "/api/delete/{id}": {
             "delete": {
                 "tags": [
                     "Products"
                 ],
                 "summary": "Delete a product by ID",
                 "description": "Remove the specified resource from storage.",
-                "operationId": "066fb076f6f5a25c7161278aacd5e89d",
+                "operationId": "85f2b7cade133998880a2b0603e22b12",
                 "parameters": [
                     {
                         "name": "id",
@@ -203,16 +201,6 @@
                             "type": "integer"
                         },
                         "example": 6
-                    },
-                    {
-                        "name": "X-CSRF-TOKEN",
-                        "in": "header",
-                        "description": "CSRF token required for DELETE requests",
-                        "required": true,
-                        "schema": {
-                            "type": "string"
-                        },
-                        "example": "your-csrf-token-here"
                     }
                 ],
                 "responses": {
@@ -235,7 +223,12 @@
                     "404": {
                         "description": "Product not found"
                     }
-                }
+                },
+                "security": [
+                    {
+                        "bearerAuth": []
+                    }
+                ]
             }
         },
         "/csrf-token": {
@@ -251,18 +244,72 @@
                         "content": {
                             "application/json": {
                                 "schema": {
-                                    "properties": {
-                                        "csrf_token": {
-                                            "type": "string",
-                                            "example": "somerandomtokenhere"
-                                        }
-                                    },
                                     "type": "object"
                                 }
                             }
                         }
                     }
                 }
+            }
+        },
+        "/api/token": {
+            "post": {
+                "tags": [
+                    "Products"
+                ],
+                "summary": "Get User Token",
+                "operationId": "f9941ca161077a1c14c11bdc1679f36a",
+                "requestBody": {
+                    "required": true,
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "properties": {
+                                    "email": {
+                                        "type": "string"
+                                    },
+                                    "password": {
+                                        "type": "string"
+                                    },
+                                    "device_name": {
+                                        "type": "string"
+                                    }
+                                },
+                                "type": "object"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Returne Token Successfully ",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "properties": {
+                                        "token": {
+                                            "type": "string",
+                                            "example": "1|abc123tokenexample"
+                                        }
+                                    },
+                                    "type": "object"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid credentials"
+                    }
+                }
+            }
+        }
+    },
+    "components": {
+        "securitySchemes": {
+            "bearerAuth": {
+                "type": "http",
+                "bearerFormat": "JWT",
+                "scheme": "bearer"
             }
         }
     },
